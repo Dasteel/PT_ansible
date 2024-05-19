@@ -15,11 +15,11 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import Updater
 from telegram.ext import CommandHandler, MessageHandler, Filters, ConversationHandler
 
-dotenv_path = Path('../.env')
+dotenv_path = Path('.env')
 load_dotenv(dotenv_path=dotenv_path)
 
 
-TOKEN = os.getenv('BOT_TOKEN')
+TOKEN = os.getenv('TOKEN')
 RM_HOST = os.getenv('RM_HOST')
 RM_PORT = os.getenv('RM_PORT')
 RM_USER = os.getenv('RM_USER')
