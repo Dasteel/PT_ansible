@@ -73,7 +73,8 @@ def findPhoneNumbers(update: Update, context: CallbackContext):
     user_input = update.message.text
 
     phoneNumRegex = re.compile(
-        r'(?:\+7|8)[ -]?(?:\(\d{3}\)|\d{3})[ -]?\d{3}[ -]?\d{2}[ -]?\d{2}')
+       r'\b[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+)*' \
+                r'@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}\b')
 
     phoneNumberList = phoneNumRegex.findall(user_input)
 
@@ -147,20 +148,23 @@ conv_handler_confirm_phone_numbers = ConversationHandler(
 
 
 
-def findEmails(update: Update, context):
+def findEmails(update: Update, context: CallbackContext):
     user_input = update.message.text
 
-    emailRegex = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
+    emailRegex = re.compile(rr"\+?7[ -]?\(?\d{3}\)?[ -]?\d{3}[ -]?\d{2}[ -]?\d{2}|\+?7[ -]?\d{10}|\+?7[ -]?\d{3}[ -]?\d{3}[ -]?\d{4}|8[ -]?\(?\d{3}\)?[ -]?\d{3}[ -]?\d{2}[ -]?\d{2}|8[ -]?\d{10}|8[ -]?\d{3}[ -]?\d{3}[ -]?\d{4}")
 
     emailList = emailRegex.findall(user_input)
 
-    context.user_data['email_addresses'] = emailList
-    if not emailList:
+    # Используем set для удаления дубликатов
+    uniqueEmailList = list(set(emailList))
+
+    context.user_data['email_addresses'] = uniqueEmailList
+    if not uniqueEmailList:
         update.message.reply_text('Email адреса не найдены')
         return
 
     emails = ''
-    for i, email_address in enumerate(emailList, start=1):
+    for i, email_address in enumerate(uniqueEmailList, start=1):
         emails += f'{i}. {email_address}\n'
 
     update.message.reply_text(emails)
