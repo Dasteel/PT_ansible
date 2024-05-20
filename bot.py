@@ -69,7 +69,7 @@ def verify_passwordCommand(update: Update, context):
     return 'verify_password'
 
 
-def findPhoneNumbers(update: Update, context):
+def findPhoneNumbers(update: Update, context: CallbackContext):
     user_input = update.message.text
 
     phoneNumRegex = re.compile(
@@ -77,13 +77,16 @@ def findPhoneNumbers(update: Update, context):
 
     phoneNumberList = phoneNumRegex.findall(user_input)
 
-    context.user_data['phone_numbers'] = phoneNumberList
-    if not phoneNumberList:
+    # Используем set для удаления дубликатов
+    uniquePhoneNumberList = list(set(phoneNumberList))
+
+    context.user_data['phone_numbers'] = uniquePhoneNumberList
+    if not uniquePhoneNumberList:
         update.message.reply_text('Телефонные номера не найдены')
         return
 
     phoneNumbers = ''
-    for i, phone_number in enumerate(phoneNumberList, start=1):
+    for i, phone_number in enumerate(uniquePhoneNumberList, start=1):
         phoneNumbers += f'{i}. {phone_number}\n'
 
     update.message.reply_text(phoneNumbers)
